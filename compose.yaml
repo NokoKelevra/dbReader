@@ -1,5 +1,6 @@
 services:
   dbreader:
+    container_name: dbreader
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,6 +11,9 @@ services:
       DBREADER_DATABASE_DIRECTORY: /app/data
       PYTHONUNBUFFERED: "1"
     volumes:
-      - ./data:/app/data
+      - dbreader_data:/app/data
     restart: unless-stopped
     init: true
+
+volumes:
+  dbreader_data:
