@@ -210,4 +210,5 @@ Las contribuciones, propuestas de mejoras y notificaciones de errores son bienve
 
 ## Licencia
 
-La licencia del proyecto debe definirse antes de su publicación. Hasta que se incluya un archivo `LICENSE`, no debe asumirse que el código está disponible bajo una licencia de código abierto.
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
