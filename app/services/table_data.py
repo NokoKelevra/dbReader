@@ -12,6 +12,12 @@ logger = logging.getLogger(__name__)
 DEFAULT_PAGE_SIZE = 50
 MAX_PAGE_SIZE = 100
 
+def decode_sqlite_text(value: bytes) -> str:
+    """Decode UTF-8 text, falling back to Windows-1252 for legacy data."""
+    try:
+        return value.decode("utf-8")
+    except UnicodeDecodeError:
+        return value.decode("cp1252", errors="replace")
 
 class TableDataNotFoundError(Exception):
     """La base de datos o la tabla solicitada no existe."""
@@ -58,6 +64,7 @@ def get_table_data(
 
     try:
         with sqlite3.connect(uri, uri=True, timeout=5) as connection:
+            connection.text_factory = decode_sqlite_text
             connection.row_factory = sqlite3.Row
 
             table = connection.execute(

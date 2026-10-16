@@ -88,3 +88,27 @@ def test_get_table_data_rejects_invalid_pagination(
             limit=limit,
             offset=offset,
         )
+        
+def test_get_table_data_handles_invalid_utf8_text(
+    test_client,
+    sample_database,
+):
+    import sqlite3
+
+    database_id = get_database_id(test_client, sample_database.name)
+
+    with sqlite3.connect(sample_database) as connection:
+        connection.execute(
+            "CREATE TABLE legacy_text (id INTEGER PRIMARY KEY, name TEXT)"
+        )
+        connection.execute(
+            "INSERT INTO legacy_text (name) VALUES (CAST(? AS TEXT))",
+            (sqlite3.Binary(b"01 Electr\xf3nica del motor"),),
+        )
+
+    result = get_table_data(
+        database_id=database_id,
+        table_name="legacy_text",
+    )
+
+    assert result["rows"][0]["name"] == "01 Electrónica del motor"
