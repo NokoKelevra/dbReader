@@ -757,7 +757,6 @@ function setupTableDataControls() {
     });
 }
 
-
 function setDataModalView(view) {
     state.dataModalView = view;
 
@@ -789,30 +788,35 @@ function openDataModal(value, column, record) {
         ? "NULL"
         : String(value);
 
-    state.dataModalRecord = record;
+    // Keep only the selected field instead of the entire row.
+    const selectedField = {
+        [column]: value
+    };
+
+    state.dataModalRecord = selectedField;
+
     elements.dataModalTitle.textContent = column;
     elements.dataModalMeta.textContent =
         `${state.selectedTableData?.tableName ?? "Table"} · ${column}`;
 
     elements.dataModalValue.textContent = displayValue;
-    elements.dataModalJson.textContent = JSON.stringify(record, null, 2);
+    elements.dataModalJson.textContent = JSON.stringify(
+        selectedField,
+        null,
+        2
+    );
 
     elements.dataModalRow.replaceChildren();
 
-    for (const [field, fieldValue] of Object.entries(record)) {
-        const fieldElement = document.createElement("div");
-        fieldElement.className = "data-modal-row-field";
-        fieldElement.textContent = field;
+    const fieldElement = document.createElement("div");
+    fieldElement.className = "data-modal-row-field";
+    fieldElement.textContent = column;
 
-        const valueElement = document.createElement("div");
-        valueElement.className = "data-modal-row-value";
-        valueElement.textContent =
-            fieldValue === null || fieldValue === undefined
-                ? "NULL"
-                : String(fieldValue);
+    const valueElement = document.createElement("div");
+    valueElement.className = "data-modal-row-value";
+    valueElement.textContent = displayValue;
 
-        elements.dataModalRow.append(fieldElement, valueElement);
-    }
+    elements.dataModalRow.append(fieldElement, valueElement);
 
     elements.dataModalSize.textContent =
         `${displayValue.length.toLocaleString()} characters`;
